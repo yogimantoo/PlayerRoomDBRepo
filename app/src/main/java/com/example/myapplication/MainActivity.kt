@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PlayerScreen(modifier: Modifier = Modifier) {
+fun PlayerScreen() {
 
     val owner = LocalViewModelStoreOwner.current
 
@@ -112,57 +113,58 @@ fun MainScreen(
             onTextChange = onPlayerTextChange,
             keyboardType = KeyboardType.Text
         )
-
-    }
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-    ) {
-        Button(onClick = {
-            viewModel.insertPlayer(
-                Player(
-                    playerName,
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+        ) {
+            Button(onClick = {
+                viewModel.insertPlayer(
+                    Player(
+                        playerName,
+                    )
                 )
-            )
-            searching = false
-        }) {
-            Text("Add")
-        }
+                searching = false
+            }) {
+                Text("Add")
+            }
 
-        Button(onClick = {
-            searching = true
-            viewModel.findPlayer(playerName)
-        }) {
-            Text("Search")
-        }
+            Button(onClick = {
+                searching = true
+                viewModel.findPlayer(playerName)
+            }) {
+                Text("Search")
+            }
 
-        Button(onClick = {
-            searching = false
-            viewModel.deletePlayer(playerName)
-        }) {
-            Text("Delete")
-        }
+            Button(onClick = {
+                searching = false
+                viewModel.deletePlayer(playerName)
+            }) {
+                Text("Delete")
+            }
 
-        Button(onClick = {
-            searching = false
-            playerName = ""
-        }) {
-            Text("Clear")
+            Button(onClick = {
+                searching = false
+                playerName = ""
+            }) {
+                Text("Clear")
+            }
         }
         LazyColumn(
             Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(5.dp)
         ) {
             val list = if (searching) searchResults else allPlayers
             item {
                 TitleRow(head1 = "ID", head2 = "Player")
             }
-
-            items(list) { player ->
-                PlayerRow(id = player.id, name = player.playerName)
+            items(
+                items = list,
+                key = { player -> player.id }
+            ) { player ->
+                PlayerRow(player.id, player.name)
             }
         }
     }
